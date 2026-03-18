@@ -1,0 +1,1446 @@
+/**
+ * Checkmate PDF Invoices - Template Editor Styles
+ * 
+ * WYSIWYG editor CSS that matches Dompdf rendering
+ */
+
+/* ========================================
+   CSS Variables
+======================================== */
+:root {
+	/* Editor Theme - Light */
+	--editor-bg: #f5f5f7;
+	--editor-surface: #ffffff;
+	--editor-border: rgba(0, 0, 0, 0.08);
+	--editor-text: #1d1d1f;
+	--editor-text-secondary: #6e6e73;
+	--editor-primary: #007aff;
+	--editor-primary-hover: #0056b3;
+	--editor-danger: #ff3b30;
+	--editor-success: #34c759;
+	--editor-warning: #ff9500;
+	
+	/* Panels */
+	--panel-bg: #ffffff;
+	--panel-header-bg: #fafafa;
+	--panel-width: 260px;
+	
+	/* Shadows */
+	--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+	--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+	
+	/* Canvas */
+	--canvas-bg: #e5e5ea;
+	--canvas-grid: rgba(0, 0, 0, 0.03);
+	
+	/* Block hover */
+	--block-hover-outline: rgba(0, 122, 255, 0.5);
+	--block-selected-outline: #007aff;
+	--drop-indicator: #007aff;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+	--editor-bg: #1c1c1e;
+	--editor-surface: #2c2c2e;
+	--editor-border: rgba(255, 255, 255, 0.1);
+	--editor-text: #f5f5f7;
+	--editor-text-secondary: #98989d;
+	
+	--panel-bg: #2c2c2e;
+	--panel-header-bg: #38383a;
+	
+	--canvas-bg: #38383a;
+	--canvas-grid: rgba(255, 255, 255, 0.03);
+}
+
+/* ========================================
+   Editor Layout
+======================================== */
+.checkmate-editor-wrap {
+	position: fixed;
+	top: 32px; /* WordPress admin bar */
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	background: var(--editor-bg);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	color: var(--editor-text);
+	z-index: 99999;
+}
+
+/* Hide WordPress admin menu */
+.checkmate-editor-wrap ~ #adminmenuwrap,
+.checkmate-editor-wrap ~ #wpcontent,
+.checkmate-editor-wrap ~ #wpfooter {
+	display: none !important;
+}
+
+/* ========================================
+   Editor Header
+======================================== */
+.editor-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 56px;
+	padding: 0 16px;
+	background: var(--editor-surface);
+	border-bottom: 1px solid var(--editor-border);
+	flex-shrink: 0;
+}
+
+.editor-header-left,
+.editor-header-right {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.editor-header-center {
+	display: flex;
+	align-items: center;
+}
+
+.editor-back-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	color: var(--editor-text);
+	text-decoration: none;
+	transition: background 0.15s;
+}
+
+.editor-back-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .editor-back-btn:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.template-name-wrap {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.template-name-input {
+	width: 200px;
+	padding: 8px 12px;
+	border: 1px solid var(--editor-border);
+	border-radius: 8px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 14px;
+	font-weight: 500;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.template-name-input:focus {
+	outline: none;
+	border-color: var(--editor-primary);
+	box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+}
+
+.document-type-select {
+	padding: 8px 12px;
+	border: 1px solid var(--editor-border);
+	border-radius: 8px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 13px;
+	cursor: pointer;
+}
+
+/* View Toggle */
+.view-toggle {
+	display: flex;
+	background: rgba(0, 0, 0, 0.05);
+	border-radius: 8px;
+	padding: 3px;
+}
+
+[data-theme="dark"] .view-toggle {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.view-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--editor-text-secondary);
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.view-btn:hover {
+	color: var(--editor-text);
+}
+
+.view-btn.active {
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	box-shadow: var(--shadow-sm);
+}
+
+/* Header Buttons */
+.editor-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+	border: none;
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.editor-btn.secondary {
+	background: rgba(0, 0, 0, 0.05);
+	color: var(--editor-text);
+}
+
+.editor-btn.secondary:hover:not(:disabled) {
+	background: rgba(0, 0, 0, 0.08);
+}
+
+.editor-btn.secondary:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+[data-theme="dark"] .editor-btn.secondary {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .editor-btn.secondary:hover:not(:disabled) {
+	background: rgba(255, 255, 255, 0.15);
+}
+
+.editor-btn.primary {
+	background: var(--editor-primary);
+	color: #ffffff;
+}
+
+.editor-btn.primary:hover {
+	background: var(--editor-primary-hover);
+}
+
+.editor-btn.primary.saved {
+	background: var(--editor-success);
+}
+
+.header-divider {
+	width: 1px;
+	height: 24px;
+	background: var(--editor-border);
+	margin: 0 4px;
+}
+
+/* ========================================
+   Main Editor Area
+======================================== */
+.editor-main {
+	display: flex;
+	flex: 1;
+	overflow: hidden;
+}
+
+/* ========================================
+   Blocks Panel (Left Sidebar)
+======================================== */
+.blocks-panel {
+	width: var(--panel-width);
+	background: var(--panel-bg);
+	border-right: 1px solid var(--editor-border);
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+
+.panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: var(--panel-header-bg);
+	border-bottom: 1px solid var(--editor-border);
+}
+
+.panel-header h3 {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--editor-text);
+}
+
+.panel-search-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--editor-text-secondary);
+	cursor: pointer;
+}
+
+.panel-search-toggle:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+.blocks-search {
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--editor-border);
+}
+
+.blocks-search input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--editor-border);
+	border-radius: 6px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 13px;
+}
+
+.blocks-list {
+	flex: 1;
+	overflow-y: auto;
+	padding: 8px 0;
+}
+
+/* Block Categories */
+.blocks-category {
+	margin-bottom: 4px;
+}
+
+.category-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 8px 16px;
+	border: none;
+	background: transparent;
+	color: var(--editor-text-secondary);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	cursor: pointer;
+	transition: color 0.15s;
+}
+
+.category-header:hover {
+	color: var(--editor-text);
+}
+
+.category-chevron {
+	transition: transform 0.2s;
+}
+
+.blocks-category.collapsed .category-chevron {
+	transform: rotate(-90deg);
+}
+
+.blocks-category.collapsed .category-blocks {
+	display: none;
+}
+
+.category-blocks {
+	padding: 4px 8px;
+}
+
+/* Block Items */
+.block-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border-radius: 8px;
+	cursor: grab;
+	transition: background 0.15s;
+}
+
+.block-item:hover {
+	background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .block-item:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.block-item:active {
+	cursor: grabbing;
+}
+
+.block-item.dragging {
+	opacity: 0.5;
+}
+
+.block-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	background: rgba(0, 122, 255, 0.1);
+	color: var(--editor-primary);
+}
+
+.block-title {
+	font-size: 13px;
+	color: var(--editor-text);
+}
+
+/* ========================================
+   Canvas Area
+======================================== */
+.editor-canvas-wrap {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.canvas-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 40px;
+	padding: 0 16px;
+	background: var(--editor-surface);
+	border-bottom: 1px solid var(--editor-border);
+}
+
+.zoom-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.zoom-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--editor-text-secondary);
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.zoom-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+	color: var(--editor-text);
+}
+
+.zoom-level {
+	min-width: 50px;
+	text-align: center;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--editor-text);
+}
+
+.page-info {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 12px;
+	color: var(--editor-text-secondary);
+}
+
+.page-info span {
+	padding: 4px 8px;
+	background: rgba(0, 0, 0, 0.04);
+	border-radius: 4px;
+}
+
+/* Canvas Container */
+.canvas-container {
+	flex: 1;
+	overflow: auto;
+	padding: 40px;
+	background: var(--canvas-bg);
+	background-image: 
+		linear-gradient(var(--canvas-grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--canvas-grid) 1px, transparent 1px);
+	background-size: 20px 20px;
+}
+
+/* PDF Canvas (Paper) */
+.pdf-canvas {
+	width: var(--paper-width);
+	min-height: var(--paper-height);
+	margin: 0 auto;
+	background: var(--bg-color, #ffffff);
+	box-shadow: var(--shadow-lg);
+	position: relative;
+	transform-origin: top center;
+	transition: transform 0.2s;
+	
+	/* Paper styles to match PDF */
+	font-family: 'DejaVu Sans', sans-serif;
+	font-size: var(--base-font-size, 9pt);
+	color: var(--text-color, #000000);
+	line-height: 1.4;
+}
+
+.canvas-content {
+	padding: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
+	min-height: calc(var(--paper-height) - var(--margin-top) - var(--margin-bottom));
+}
+
+/* Empty State */
+.canvas-empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 80px 40px;
+	text-align: center;
+	color: var(--editor-text-secondary);
+	border: 2px dashed var(--editor-border);
+	border-radius: 12px;
+	margin: 40px;
+}
+
+.canvas-empty-state svg {
+	margin-bottom: 16px;
+	opacity: 0.5;
+}
+
+.canvas-empty-state h4 {
+	margin: 0 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--editor-text);
+}
+
+.canvas-empty-state p {
+	margin: 0;
+	font-size: 13px;
+}
+
+/* ========================================
+   Block Rendering in Canvas
+   (PDF-compatible styles only!)
+======================================== */
+
+/* Block wrapper */
+.template-block {
+	position: relative;
+	transition: outline 0.15s;
+	/* margin now controlled by block attributes */
+}
+
+.template-block:hover {
+	outline: 2px solid var(--block-hover-outline);
+	outline-offset: 2px;
+}
+
+.template-block.selected {
+	outline: 2px solid var(--block-selected-outline);
+	outline-offset: 2px;
+}
+
+/* Row block - using table layout for PDF compatibility */
+.block-row {
+	display: table;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.block-column {
+	display: table-cell;
+	vertical-align: top;
+	padding: 0 5px;
+}
+
+.block-column:first-child {
+	padding-left: 0;
+}
+
+.block-column:last-child {
+	padding-right: 0;
+}
+
+/* Spacer block */
+.block-spacer {
+	/* Height set via inline style */
+	display: block;
+}
+
+/* Divider block */
+.block-divider {
+	border: none;
+	height: 0;
+	margin: 0;
+	/* Border set via inline style */
+}
+
+/* Logo block */
+.block-logo {
+	/* Alignment via text-align */
+	display: block;
+}
+
+.block-logo img {
+	max-width: 100%;
+	height: auto;
+}
+
+/* Text blocks */
+.block-text,
+.block-heading {
+	/* Font properties via inline styles */
+	word-wrap: break-word;
+}
+
+/* Ensure spacing comes from block margin settings (not browser defaults) */
+.template-block.block-text p,
+.template-block.block-text h1,
+.template-block.block-text h2,
+.template-block.block-text h3,
+.template-block.block-text h4,
+.template-block.block-text h5,
+.template-block.block-text h6,
+.template-block.block-text ul,
+.template-block.block-text ol,
+.template-block.block-text li,
+.template-block.block-text blockquote {
+	margin: 0;
+}
+
+/* Document blocks */
+.block-document-title,
+.block-document-number,
+.block-document-date,
+.block-shop-info,
+.block-billing-address,
+.block-shipping-address,
+.block-order-number,
+.block-order-date,
+.block-payment-method,
+.block-shipping-method,
+.block-customer-note {
+	/* Styled via inline properties */
+	display: block;
+}
+
+.block-label {
+	font-weight: bold;
+}
+
+/* Tables */
+.block-items-table table,
+.block-totals-table table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.block-items-table th,
+.block-items-table td {
+	padding: 8px 10px;
+	text-align: left;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.block-items-table th {
+	font-weight: bold;
+}
+
+.block-totals-table td {
+	padding: 4px 0;
+}
+
+.block-totals-table .total-label {
+	text-align: right;
+	padding-right: 20px;
+}
+
+.block-totals-table .total-value {
+	text-align: right;
+}
+
+.block-totals-table .grand-total {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+/* Notes and Footer */
+.block-notes,
+.block-footer {
+	/* Styled via inline properties */
+	display: block;
+}
+
+.block-notes-title,
+.block-footer-content {
+	/* Additional styling */
+	display: block;
+}
+
+/* ========================================
+   Preview Panel
+======================================== */
+.preview-panel {
+	width: 50%;
+	border-left: 1px solid var(--editor-border);
+	display: flex;
+	flex-direction: column;
+	background: var(--canvas-bg);
+}
+
+.preview-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 40px;
+	padding: 0 16px;
+	background: var(--editor-surface);
+	border-bottom: 1px solid var(--editor-border);
+}
+
+.preview-title {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--editor-text);
+}
+
+.preview-refresh-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--editor-text-secondary);
+	cursor: pointer;
+}
+
+.preview-refresh-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+.preview-container {
+	flex: 1;
+	padding: 20px;
+	overflow: auto;
+}
+
+.preview-container iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: white;
+	box-shadow: var(--shadow-lg);
+}
+
+/* ========================================
+   Settings Panel (Right Sidebar)
+======================================== */
+.settings-panel {
+	width: var(--panel-width);
+	background: var(--panel-bg);
+	border-left: 1px solid var(--editor-border);
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	overflow-y: auto;
+}
+
+.settings-section {
+	border-bottom: 1px solid var(--editor-border);
+}
+
+.settings-section .panel-header {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.delete-block-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--editor-danger);
+	cursor: pointer;
+}
+
+.delete-block-btn:hover {
+	background: rgba(255, 59, 48, 0.1);
+}
+
+.settings-content {
+	padding: 16px;
+}
+
+.setting-group {
+	margin-bottom: 16px;
+}
+
+.setting-group:last-child {
+	margin-bottom: 0;
+}
+
+.setting-group label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--editor-text-secondary);
+}
+
+.setting-select,
+.setting-input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--editor-border);
+	border-radius: 6px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 13px;
+}
+
+.setting-input--compact {
+	padding: 6px 8px;
+	text-align: center;
+}
+
+/* Rich text editor (text block content) */
+.cm-richtext-wrap {
+	border: 1px solid var(--editor-border);
+	border-radius: 8px;
+	overflow: hidden;
+	background: var(--editor-surface);
+}
+
+.cm-richtext-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+	padding: 8px;
+	background: rgba(0, 0, 0, 0.03);
+	border-bottom: 1px solid var(--editor-border);
+}
+
+[data-theme="dark"] .cm-richtext-toolbar {
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.cm-rt-btn {
+	min-width: 30px;
+	height: 28px;
+	padding: 0 8px;
+	border-radius: 6px;
+	border: 1px solid var(--editor-border);
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.cm-rt-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .cm-rt-btn:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.cm-rt-select {
+	flex: 0 0 100%;
+	width: 100%;
+	margin-left: 0;
+	height: 28px;
+	border-radius: 6px;
+	border: 1px solid var(--editor-border);
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	padding: 0 8px;
+}
+
+.cm-richtext-editor {
+	min-height: 120px;
+	max-height: 280px;
+	overflow: auto;
+	padding: 10px;
+	font-size: 13px;
+	line-height: 1.5;
+	outline: none;
+}
+
+.cm-richtext-editor:focus {
+	box-shadow: inset 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+.setting-select:focus,
+.setting-input:focus {
+	outline: none;
+	border-color: var(--editor-primary);
+}
+
+/* Orientation Toggle */
+.orientation-toggle {
+	display: flex;
+	gap: 8px;
+}
+
+.orientation-btn {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 12px;
+	border: 1px solid var(--editor-border);
+	border-radius: 8px;
+	background: var(--editor-surface);
+	color: var(--editor-text-secondary);
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.orientation-btn:hover {
+	border-color: var(--editor-primary);
+	color: var(--editor-primary);
+}
+
+.orientation-btn.active {
+	border-color: var(--editor-primary);
+	background: rgba(0, 122, 255, 0.1);
+	color: var(--editor-primary);
+}
+
+/* Margins Grid */
+.margins-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+}
+
+/* Block Padding/Margin compact controls */
+.spacing-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+}
+
+.spacing-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.spacing-field span {
+	font-size: 10px;
+	color: var(--editor-text-secondary);
+	text-align: center;
+}
+
+.margin-input {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.margin-input input {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid var(--editor-border);
+	border-radius: 6px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 13px;
+	text-align: center;
+}
+
+.margin-input span {
+	font-size: 10px;
+	color: var(--editor-text-secondary);
+	text-align: center;
+}
+
+/* Color Input */
+.color-input-wrap {
+	display: flex;
+	gap: 8px;
+}
+
+.color-input-wrap input[type="color"] {
+	width: 40px;
+	height: 34px;
+	padding: 2px;
+	border: 1px solid var(--editor-border);
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.color-input-wrap input[type="text"] {
+	flex: 1;
+	padding: 8px;
+	border: 1px solid var(--editor-border);
+	border-radius: 6px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 13px;
+	font-family: monospace;
+}
+
+/* Toggle Switch */
+.setting-toggle {
+	position: relative;
+	width: 44px;
+	height: 24px;
+}
+
+.setting-toggle input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: var(--editor-border);
+	border-radius: 24px;
+	transition: 0.2s;
+}
+
+.toggle-slider:before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background: white;
+	border-radius: 50%;
+	transition: 0.2s;
+}
+
+.setting-toggle input:checked + .toggle-slider {
+	background: var(--editor-primary);
+}
+
+/* Image Input */
+.image-input-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.image-preview {
+	width: 100%;
+	height: 100px;
+	border: 2px dashed var(--editor-border);
+	border-radius: 8px;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: var(--editor-surface);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--editor-text-secondary);
+	font-size: 12px;
+    overflow: hidden;
+}
+
+.image-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.image-buttons button {
+	flex: 1;
+	padding: 8px 12px;
+	border: 1px solid var(--editor-border);
+	border-radius: 6px;
+	background: var(--editor-surface);
+	color: var(--editor-text);
+	font-size: 12px;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.image-buttons button:hover {
+	background: var(--editor-hover);
+}
+
+.image-buttons .btn-remove-image {
+	flex: 0;
+	color: var(--editor-danger);
+	border-color: var(--editor-danger);
+}
+
+.image-buttons .btn-remove-image:hover {
+	background: rgba(255, 59, 48, 0.1);
+}
+
+.setting-toggle input:checked + .toggle-slider:before {
+	transform: translateX(20px);
+}
+
+/* ========================================
+   Block Toolbar (Hover Actions)
+======================================== */
+.block-toolbar {
+	position: fixed;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px;
+	background: var(--editor-surface);
+	border: 1px solid var(--editor-border);
+	border-radius: 8px;
+	box-shadow: var(--shadow-md);
+	z-index: 1000;
+}
+
+/* Invisible hover bridge to connect toolbar with block below */
+.block-toolbar::after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	height: 12px; /* Gap between toolbar and block */
+	background: transparent;
+}
+
+/* When toolbar is to the right of a row, the hover bridge should be horizontal */
+.block-toolbar.is-row::after {
+	top: 0;
+	bottom: 0;
+	left: -12px;
+	right: auto;
+	width: 12px;
+	height: auto;
+}
+
+.toolbar-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--editor-text-secondary);
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.toolbar-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+	color: var(--editor-text);
+}
+
+.toolbar-btn.danger:hover {
+	background: rgba(255, 59, 48, 0.1);
+	color: var(--editor-danger);
+}
+
+.toolbar-divider {
+	width: 1px;
+	height: 20px;
+	background: var(--editor-border);
+}
+
+/* Row-only toolbar buttons - hidden by default */
+.block-toolbar .row-only {
+	display: none;
+}
+
+.block-toolbar.is-row .row-only {
+	display: flex;
+}
+
+/* Column-only toolbar buttons - hidden by default */
+.block-toolbar .column-only {
+	display: none;
+}
+
+.block-toolbar.is-column .column-only {
+	display: flex;
+}
+
+/* Column toolbars use left/right + remove; hide up/down/duplicate/delete to avoid confusion */
+.block-toolbar.is-column .toolbar-btn[data-action="move-up"],
+.block-toolbar.is-column .toolbar-btn[data-action="move-down"],
+.block-toolbar.is-column .toolbar-btn[data-action="duplicate"],
+.block-toolbar.is-column .toolbar-btn[data-action="delete"] {
+	display: none;
+}
+
+.block-toolbar.is-column .toolbar-divider:not(.column-only) {
+	display: none;
+}
+
+/* ========================================
+   Drop Indicator
+======================================== */
+.drop-indicator {
+	position: absolute;
+	height: 3px;
+	background: var(--drop-indicator);
+	border-radius: 2px;
+	pointer-events: none;
+	z-index: 100;
+	display: none;
+}
+
+.drop-indicator.visible {
+	display: block;
+}
+
+.drop-indicator::before,
+.drop-indicator::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 8px;
+	height: 8px;
+	background: var(--drop-indicator);
+	border-radius: 50%;
+}
+
+.drop-indicator::before {
+	left: -4px;
+}
+
+.drop-indicator::after {
+	right: -4px;
+}
+
+/* ========================================
+   Drop Highlighting
+======================================== */
+.column-placeholder {
+	padding: 10px;
+	border: 2px dashed var(--editor-border);
+	border-radius: 8px;
+	text-align: center;
+	color: var(--editor-text-tertiary);
+	font-size: 12px;
+	transition: all 0.2s ease;
+	background: transparent;
+}
+
+.column-placeholder.drop-highlight,
+.column-placeholder:hover {
+	border-color: var(--drop-indicator);
+	background: rgba(0, 122, 255, 0.05);
+	color: var(--drop-indicator);
+}
+
+body.is-dragging .column-placeholder {
+	border-color: var(--drop-indicator);
+	border-style: dashed;
+	animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+/* Column Resize Handle */
+.column-resize-handle {
+	position: absolute;
+	top: 0;
+	right: -4px;
+	width: 8px;
+	height: 100%;
+	cursor: col-resize;
+	background: transparent;
+	z-index: 10;
+}
+
+.column-resize-handle:hover,
+.column-resize-handle.active {
+	background: var(--editor-primary);
+	opacity: 0.5;
+}
+
+.column-resize-handle::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 2px;
+	height: 24px;
+	background: var(--editor-border);
+	border-radius: 1px;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+.column-resize-handle:hover::after {
+	opacity: 1;
+	background: var(--editor-primary);
+}
+
+/* Row container for resize */
+.row-container {
+	position: relative;
+}
+
+body.is-resizing-columns {
+	cursor: col-resize !important;
+	user-select: none;
+}
+
+body.is-resizing-columns * {
+	cursor: col-resize !important;
+}
+
+@keyframes pulse-border {
+	0%, 100% { opacity: 0.5; }
+	50% { opacity: 1; }
+}
+
+#canvas-empty.drop-highlight {
+	border-color: var(--drop-indicator);
+	background: rgba(0, 122, 255, 0.05);
+}
+
+body.is-dragging #canvas-empty {
+	border-color: var(--drop-indicator);
+}
+
+/* Block dragging state */
+.block-item.dragging {
+	opacity: 0.5;
+	transform: scale(0.95);
+}
+
+body.is-dragging .template-block {
+	transition: transform 0.15s ease;
+}
+
+body.is-dragging .template-block:hover {
+	transform: translateY(-2px);
+}
+
+/* ========================================
+   Column Hover Highlight
+======================================== */
+
+/* Column border highlight */
+.block-row td[data-column-id]:hover {
+	outline: 1px dashed var(--block-hover-outline);
+	outline-offset: -2px;
+}
+
+.column-toolbar-hit {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 14px;
+	background: transparent;
+	z-index: 5;
+}
+
+.block-row td[data-column-id] {
+	transition: outline 0.15s ease;
+}
+
+/* ========================================
+   Responsive Adjustments
+======================================== */
+@media (max-width: 1400px) {
+	:root {
+		--panel-width: 220px;
+	}
+}
+
+@media (max-width: 1200px) {
+	.blocks-panel {
+		width: 200px;
+	}
+	
+	.settings-panel {
+		width: 240px;
+	}
+	
+	.template-name-input {
+		width: 160px;
+	}
+}
+
+/* ========================================
+   Print Styles (for PDF-like rendering)
+======================================== */
+@media print {
+	.checkmate-editor-wrap {
+		position: static;
+		background: white;
+	}
+	
+	.editor-header,
+	.blocks-panel,
+	.settings-panel,
+	.canvas-toolbar,
+	.block-toolbar,
+	.preview-panel {
+		display: none !important;
+	}
+	
+	.editor-canvas-wrap {
+		overflow: visible;
+	}
+	
+	.canvas-container {
+		padding: 0;
+		background: white;
+		overflow: visible;
+	}
+	
+	.pdf-canvas {
+		box-shadow: none;
+		margin: 0;
+	}
+	
+	.template-block:hover,
+	.template-block.selected {
+		outline: none;
+	}
+}
